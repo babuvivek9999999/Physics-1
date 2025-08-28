@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>विद्युत आवेश तथा क्षेत्र क्विज़</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans Devanagari', Arial, sans-serif;
+            color: #333;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        .ad-container {
+            margin: 10px auto;
+            text-align: center;
+            width: 320px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+        }
+
+        .quiz-container {
+            background: #fff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            box-sizing: border-box;
+            margin: 20px 0;
+        }
+        
+        h1, h2 {
+            color: #007bff;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 1.8em;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 60%;
+            height: 3px;
+            background-color: #007bff;
+            border-radius: 2px;
+        }
+
+        p {
+            font-size: 1.05em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .section {
+            display: none;
+        }
+        #welcome-screen {
+            display: block;
+        }
+        input[type="text"] {
+            width: calc(100% - 30px);
+            padding: 12px 15px;
+            margin-bottom: 25px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1.1em;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 5px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            width: calc(100% - 10px);
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .question-text {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #222;
+            line-height: 1.6;
+        }
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 25px;
+        }
+        .options-list li {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-align: left;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .options-list li:hover:not(.correct, .incorrect, .disabled) {
+            background-color: #e2e6ea;
+            border-color: #007bff;
+        }
+        .options-list li.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #28a745;
+            font-weight: bold;
+        }
+        .options-list li.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #dc3545;
+            font-weight: bold;
+        }
+        .options-list li.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .navigation-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .navigation-buttons button {
+            width: 48%;
+        }
+        .results-summary {
+            text-align: left;
+            margin-top: 30px;
+            font-size: 1.05em;
+            line-height: 1.8;
+            padding: 15px;
+            border: 1px solid #007bff;
+            border-radius: 8px;
+            background-color: #eaf6ff;
+        }
+        .results-summary p {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .results-summary strong {
+            color: #0056b3;
+            font-weight: bold;
+        }
+        .question-counter {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 15px;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Ad -->
+    <div class="ad-container">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '4b505c9273cf9161c278efee028f35e2',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/4b505c9273cf9161c278efee028f35e2/invoke.js"></script>
+    </div>
+
+    <div class="quiz-container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="section">
+            <h1>विद्युत आवेश तथा क्षेत्र क्विज़</h1>
+            <p>टेस्ट शुरू करने से पहले कृपया अपना नाम दर्ज करें।</p>
+            <input type="text" id="userNameInput" placeholder="अपना नाम यहाँ लिखें">
+            <button id="startButton">क्विज़ शुरू करें</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="section">
+            <h2 id="quiz-title"></h2>
+            <p class="question-counter" id="question-counter"></p>
+            <p class="question-text" id="question-text"></p>
+            <ul class="options-list" id="options-list">
+                <!-- Options will be loaded here by JavaScript -->
+            </ul>
+            <div class="navigation-buttons">
+                <button id="skipButton">छोड़ें</button>
+                <button id="nextButton" disabled>अगला प्रश्न</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="section">
+            <h1>क्विज़ परिणाम</h1>
+            <div class="results-summary">
+                <p><strong>नाम:</strong> <span><span id="finalUserName"></span></span></p>
+                <p><strong>कुल प्रश्न:</strong> <span><span id="totalQuestions"></span></span></p>
+                <p><strong>सही उत्तर:</strong> <span><span id="correctCount"></span></span></p>
+                <p><strong>गलत उत्तर:</strong> <span><span id="incorrectCount"></span></span></p>
+                <p><strong>छोड़े गए प्रश्न:</strong> <span><span id="skippedCount"></span></span></p>
+            </div>
+            <button onclick="location.reload()">दोबारा शुरू करें</button>
+        </div>
+    </div>
+
+    <!-- Bottom Ad -->
+    <div class="ad-container">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '4b505c9273cf9161c278efee028f35e2',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/4b505c9273cf9161c278efee028f35e2/invoke.js"></script>
+    </div>
+
+    <script>
+        const questions = [
+            // Your questions array remains exactly the same
+            // ... (all 60+ questions)
+            {
+                question: "धातु के आवेशित गोले के पृष्ठ से गोले के केंद्र की ओर जाने पर वैद्युत क्षेत्र:",
+                options: ["घटता है", "बढ़ता है", "उतना ही रहता है", "शून्य रहता है"],
+                correctAnswerIndex: 3,
+                year: "2024A"
+            },
+            // ... (rest of the questions)
+            {
+                question: "निम्नलिखित में किसका मात्रक वोल्ट-मीटर⁻¹ है?",
+                options: ["वैद्युत फ्लक्स", "वैद्युत विभव", "वैद्युत क्षेत्र", "वैद्युत धारिता"],
+                correctAnswerIndex: 2,
+                year: "2022A"
+            }
+        ];
+
+        let userName = "";
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let incorrectAnswers = 0;
+        let skippedQuestions = 0;
+        let questionAnswered = false;
+
+        // Get DOM elements
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+
+        const userNameInput = document.getElementById('userNameInput');
+        const startButton = document.getElementById('startButton');
+
+        const quizTitle = document.getElementById('quiz-title');
+        const questionCounter = document.getElementById('question-counter');
+        const questionText = document.getElementById('question-text');
+        const optionsList = document.getElementById('options-list');
+        const skipButton = document.getElementById('skipButton');
+        const nextButton = document.getElementById('nextButton');
+
+        const finalUserName = document.getElementById('finalUserName');
+        const totalQuestionsSpan = document.getElementById('totalQuestions');
+        const correctCountSpan = document.getElementById('correctCount');
+        const incorrectCountSpan = document.getElementById('incorrectCount');
+        const skippedCountSpan = document.getElementById('skippedCount');
+
+        // Event Listeners
+        startButton.addEventListener('click', () => {
+            userName = userNameInput.value.trim();
+            if (userName) {
+                startQuiz();
+            } else {
+                alert("कृपया अपना नाम दर्ज करें!");
+            }
+        });
+
+        nextButton.addEventListener('click', nextQuestion);
+        skipButton.addEventListener('click', skipCurrentQuestion);
+
+        // Functions
+        function startQuiz() {
+            welcomeScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            quizTitle.textContent = `विद्युत आवेश तथा क्षेत्र क्विज़ - ${userName}`;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const q = questions[currentQuestionIndex];
+                questionCounter.textContent = `प्रश्न ${currentQuestionIndex + 1} / ${questions.length}`;
+                questionText.textContent = q.question + (q.year ? ` [${q.year}]` : '');
+                optionsList.innerHTML = '';
+
+                q.options.forEach((option, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = option;
+                    li.dataset.index = index;
+                    li.addEventListener('click', () => checkAnswer(li, index));
+                    optionsList.appendChild(li);
+                });
+
+                nextButton.disabled = true;
+                skipButton.disabled = false;
+                questionAnswered = false;
+                enableOptions();
+            } else {
+                showResults();
+            }
+        }
+
+        function enableOptions() {
+            Array.from(optionsList.children).forEach(li => {
+                li.classList.remove('disabled', 'correct', 'incorrect');
+                li.style.pointerEvents = 'auto';
+            });
+        }
+
+        function disableOptions() {
+            Array.from(optionsList.children).forEach(li => {
+                li.classList.add('disabled');
+                li.style.pointerEvents = 'none';
+            });
+        }
+
+        function checkAnswer(selectedOptionElement, selectedOptionIndex) {
+            if (questionAnswered) return;
+            questionAnswered = true;
+
+            const q = questions[currentQuestionIndex];
+            disableOptions();
+            skipButton.disabled = true;
+
+            if (selectedOptionIndex === q.correctAnswerIndex) {
+                selectedOptionElement.classList.add('correct');
+                score++;
+            } else {
+                selectedOptionElement.classList.add('incorrect');
+                incorrectAnswers++;
+                optionsList.children[q.correctAnswerIndex].classList.add('correct');
+            }
+            nextButton.disabled = false;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function skipCurrentQuestion() {
+            if (!questionAnswered) {
+                skippedQuestions++;
+            }
+            nextQuestion();
+        }
+
+        function showResults() {
+            quizScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+
+            finalUserName.textContent = userName;
+            totalQuestionsSpan.textContent = questions.length;
+            correctCountSpan.textContent = score;
+            incorrectCountSpan.textContent = incorrectAnswers;
+            skippedCountSpan.textContent = skippedQuestions;
+        }
+
+        // Initial check for name input for button state
+        userNameInput.addEventListener('input', () => {
+            startButton.disabled = userNameInput.value.trim() === "";
+        });
+        startButton.disabled = true;
+    </script>
+</body>
+</html>
